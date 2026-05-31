@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Complexity
+// @name         Leetcode Complexity Analyzer
 // @namespace    http://tampermonkey.net/
 // @version      2026-05-31
 // @description  Analyze LeetCode solution complexity using Gemini
@@ -7,6 +7,7 @@
 // @match        https://leetcode.com/problems/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=leetcode.com
 // @grant        none
+// @license MIT
 // ==/UserScript==
 
 

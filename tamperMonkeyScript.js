@@ -13,8 +13,6 @@
 (function () {
     'use strict';
 
-    const API_KEY = 'AIzaSyD8L8kL0Z2jRMKA2hndd9oTERX3ikKDzEw';
-
     function createButton() {
         const button = document.createElement('button');
 
@@ -24,20 +22,12 @@
         button.style.padding = '0px 10px';
         button.style.marginLeft = '8px';
         button.style.border = 'none';
-        button.style.borderRadius = '6px';
+        button.style.borderRadius = '8px';
         button.style.cursor = 'pointer';
         button.style.fontWeight = '600';
         button.style.backgroundColor = '#222222';
-        button.style.color = '#26AA3E';
+        button.style.color = '#2563eb';
         button.style.fontSize = '14px';
-
-        button.addEventListener('mouseenter', () => {
-            button.style.backgroundColor = '#2F2F2F';
-        });
-
-        button.addEventListener('mouseleave', () => {
-            button.style.backgroundColor = '#222222';
-        });
 
         return button;
     }
@@ -94,66 +84,22 @@
                 throw new Error('Could not extract code from editor.');
             }
 
-            const prompt = `
-Analyze this code.
-
-Return ONLY valid JSON.
-
-{
-  "timeComplexity": "O(...)",
-  "spaceComplexity": "O(...)",
-  "explanation": "short explanation"
-}
-
-Code:
-
-${code}
-`;
-
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: [
-                                    {
-                                        text: prompt
-                                    }
-                                ]
-                            }
-                        ]
-                    })
-                }
-            );
+            const response = await fetch('http://localhost:3000/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    code
+                })
+            });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText);
+                const err = await response.text();
+                throw new Error(err);
             }
 
-            const data = await response.json();
-
-            console.log('Gemini Response:', data);
-
-            const text =
-                data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            if (!text) {
-                throw new Error('Gemini returned an empty response.');
-            }
-
-            const match = text.match(/\{[\s\S]*\}/);
-
-            if (!match) {
-                throw new Error('Could not find JSON in Gemini response.');
-            }
-
-            const result = JSON.parse(match[0]);
+            const result = await response.json();
 
             alert(
                 `Time Complexity: ${result.timeComplexity}\n\n` +

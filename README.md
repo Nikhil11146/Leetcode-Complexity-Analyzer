@@ -130,6 +130,12 @@ project
 
 # 🔥 Installation (Tampermonkey)
 
+## Direct Script Installation
+
+https://greasyfork.org/en/scripts/580597-leetcode-complexity-analyzer
+
+## Manual Installation
+
 ## Step 1
 
 Install Tampermonkey:

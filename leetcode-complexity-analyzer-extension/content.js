@@ -1,19 +1,5 @@
-// ==UserScript==
-// @name         Complexity
-// @namespace    http://tampermonkey.net/
-// @version      2026-05-31
-// @description  Analyze LeetCode solution complexity using Gemini
-// @author       You
-// @match        https://leetcode.com/problems/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=leetcode.com
-// @grant        none
-// ==/UserScript==
-
-
 (function () {
     'use strict';
-
-    const API_KEY = 'AIzaSyD8L8kL0Z2jRMKA2hndd9oTERX3ikKDzEw';
 
     function createButton() {
         const button = document.createElement('button');
@@ -94,66 +80,22 @@
                 throw new Error('Could not extract code from editor.');
             }
 
-            const prompt = `
-Analyze this code.
-
-Return ONLY valid JSON.
-
-{
-  "timeComplexity": "O(...)",
-  "spaceComplexity": "O(...)",
-  "explanation": "short explanation"
-}
-
-Code:
-
-${code}
-`;
-
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: [
-                                    {
-                                        text: prompt
-                                    }
-                                ]
-                            }
-                        ]
-                    })
-                }
-            );
+            const response = await fetch('https://leetcode-complexity-analyzer.onrender.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    code
+                })
+            });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText);
+                const err = await response.text();
+                throw new Error(err);
             }
 
-            const data = await response.json();
-
-            console.log('Gemini Response:', data);
-
-            const text =
-                data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            if (!text) {
-                throw new Error('Gemini returned an empty response.');
-            }
-
-            const match = text.match(/\{[\s\S]*\}/);
-
-            if (!match) {
-                throw new Error('Could not find JSON in Gemini response.');
-            }
-
-            const result = JSON.parse(match[0]);
+            const result = await response.json();
 
             alert(
                 `Time Complexity: ${result.timeComplexity}\n\n` +

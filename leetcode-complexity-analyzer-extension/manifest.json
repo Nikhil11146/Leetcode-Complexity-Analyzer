@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode Complexity Analyzer",
+  "version": "1.0",
+  "description": "Analyze LeetCode solution complexity using AI",
+
+  "permissions": [],
+
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://leetcode-complexity-analyzer.onrender.com/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.com/problems/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "icons": {
+    "128": "icon.png"
+  }
+}

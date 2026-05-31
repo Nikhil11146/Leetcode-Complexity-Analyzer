@@ -22,12 +22,20 @@
         button.style.padding = '0px 10px';
         button.style.marginLeft = '8px';
         button.style.border = 'none';
-        button.style.borderRadius = '8px';
+        button.style.borderRadius = '6px';
         button.style.cursor = 'pointer';
         button.style.fontWeight = '600';
         button.style.backgroundColor = '#222222';
-        button.style.color = '#2563eb';
+        button.style.color = '#26AA3E';
         button.style.fontSize = '14px';
+
+        button.addEventListener('mouseenter', () => {
+            button.style.backgroundColor = '#2F2F2F';
+        });
+
+        button.addEventListener('mouseleave', () => {
+            button.style.backgroundColor = '#222222';
+        });
 
         return button;
     }
@@ -84,7 +92,7 @@
                 throw new Error('Could not extract code from editor.');
             }
 
-            const response = await fetch('http://localhost:3000/', {
+            const response = await fetch('https://leetcode-complexity-analyzer.onrender.com', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

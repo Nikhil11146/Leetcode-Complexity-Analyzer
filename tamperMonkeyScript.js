@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Leetcode Complexity Analyzer
+// @name         Complexity
 // @namespace    http://tampermonkey.net/
 // @version      2026-05-31
 // @description  Analyze LeetCode solution complexity using Gemini
@@ -145,13 +145,12 @@
             }
 
             const result = await response.json();
-            createDialog(result.timeComplexity, result.spaceComplexity, result.explanation)
 
-            // alert(
-            //     `Time Complexity: ${result.timeComplexity}\n\n` +
-            //     `Space Complexity: ${result.spaceComplexity}\n\n` +
-            //     `Explanation: ${result.explanation}`
-            // );
+            alert(
+                `Time Complexity: ${result.timeComplexity}\n\n` +
+                `Space Complexity: ${result.spaceComplexity}\n\n` +
+                `Explanation: ${result.explanation}`
+            );
         } catch (error) {
             console.error(error);
             alert(`Error:\n\n${error.message}`);
@@ -175,69 +174,4 @@
     });
 
     addButton();
-
-    const style = document.createElement("style");
-    style.textContent = `
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    color: white;
-}
-
-.modal {
-color: black;
-    background: #222222;
-    width: 400px;
-    max-width: 90%;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    animation: fadeIn 0.2s ease;
-}
-
-.modal-header h2 {
-    margin: 0 0 10px;
-    color: white;
-}
-
-.modal-body {
-    margin-bottom: 20px;
-    color: white;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.close-btn {
-    padding: 8px 16px;
-    border: none;
-    background: #2563eb;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    background: #1d4ed8;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-`;
-    document.head.appendChild(style);
 })();

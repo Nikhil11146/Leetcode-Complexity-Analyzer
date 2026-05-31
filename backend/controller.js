@@ -21,22 +21,22 @@ async function getData(req, res) {
     `;
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+            'https://api.groq.com/openai/v1/chat/completions',
             {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${API_KEY}`
                 },
                 body: JSON.stringify({
-                    contents: [
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [
                         {
-                            parts: [
-                                {
-                                    text: prompt
-                                }
-                            ]
+                            role: 'user',
+                            content: prompt
                         }
-                    ]
+                    ],
+                    temperature: 0.2
                 })
             }
         );
@@ -49,10 +49,10 @@ async function getData(req, res) {
         const data = await response.json();
 
         const text =
-            data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            data?.choices?.[0]?.message?.content;
 
         if (!text) {
-            throw new Error('Gemini returned an empty response.');
+            throw new Error('Groq returned an empty response.');
         }
 
         const match = text.match(/\{[\s\S]*\}/);

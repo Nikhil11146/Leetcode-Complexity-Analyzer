@@ -393,10 +393,4 @@ If you found this project useful:
 
 ---
 
-# 📜 License
-
-MIT License
-
----
-
 Built with ☕, JavaScript, and an unhealthy amount of LeetCode tabs.

@@ -1,18 +1,21 @@
 // ==UserScript==
-// @name         Leetcode Addons
+// @name         Leetcode Complexity Analyzer
 // @namespace    http://tampermonkey.net/
-// @version      2026-06-02
-// @description  try to take over the world!
+// @version      2026-06-01ś
+// @description  Analyze LeetCode solution complexity using Gemini
 // @author       You
-// @match        https://leetcode.com/*
-// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-// @grant        none
+// @match        https://leetcode.com/problems/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=leetcode.com
+// @grant        noneś
+// @license MIT
+// @downloadURL https://update.greasyfork.org/scripts/580597/Leetcode%20Complexity%20Analyzer.user.js
+// @updateURL https://update.greasyfork.org/scripts/580597/Leetcode%20Complexity%20Analyzer.meta.js
 // ==/UserScript==
+
 
 (function () {
     'use strict';
 
-    // COMPLEXITY BUTTON
     function createDialog(time, space, message) {
         // Overlay
         const overlay = document.createElement("div");
@@ -166,6 +169,15 @@
         }
     }
 
+    const observer = new MutationObserver(() => {
+        addButton();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
     const style = document.createElement("style");
     style.textContent = `
 .modal-overlay {
@@ -235,189 +247,13 @@ color: white;
 `;
     document.head.appendChild(style);
 
-    addButton();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // QUES PER DAY
-
-    let activeDaysCache = null;
-
-    async function getLifetimeActiveDays() {
-        if (activeDaysCache !== null) {
-            return activeDaysCache;
-        }
-
-        const username = location.pathname.split('/')[2];
-
-        async function fetchYear(year) {
-            const res = await fetch('https://leetcode.com/graphql/', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    operationName: 'userProfileCalendar',
-                    variables: {
-                        username,
-                        year
-                    },
-                    query: `
-                query userProfileCalendar($username: String!, $year: Int) {
-                  matchedUser(username: $username) {
-                    userCalendar(year: $year) {
-                      activeYears
-                      submissionCalendar
-                    }
-                  }
-                }
-                `
-                })
-            });
-
-            return res.json();
-        }
-
-        const currentYear = new Date().getFullYear();
-
-        const first = await fetchYear(currentYear);
-
-        const years =
-            first.data.matchedUser.userCalendar.activeYears || [];
-
-        const activeDays = new Set();
-
-        const responses = await Promise.all(
-            years.map(year => fetchYear(year))
+// Example usage
+    document.getElementById("openBtn").addEventListener("click", () => {
+        createDialog(
+            "Delete Subject",
+            "Are you sure you want to delete this subject?"
         );
-
-        for (const data of responses) {
-            const calendar = JSON.parse(
-                data.data.matchedUser.userCalendar.submissionCalendar || "{}"
-            );
-
-            Object.keys(calendar).forEach(day => {
-                activeDays.add(day);
-            });
-        }
-
-        activeDaysCache = activeDays.size;
-
-        return activeDaysCache;
-    }
-
-    function createD(ques, days) {
-        const d = document.createElement('div');
-
-        d.id = 'questions-per-day';
-        d.className = 'mr-4.5 space-x-1';
-
-        d.innerHTML = `
-        <span class="text-label-3 dark:text-dark-label-3">
-            Avg Solves/Day:
-        </span>
-        <span class="font-medium text-label-2 dark:text-dark-label-2">
-            ${days > 0 ? (ques / days).toFixed(2) : '0.00'}
-        </span>
-    `;
-
-        return d;
-    }
-
-    let qpdRendering = false;
-
-    async function addD() {
-        if (!location.pathname.startsWith('/u/')) {
-            return false;
-        }
-
-        if (document.getElementById('questions-per-day')) {
-            return true;
-        }
-
-        if(qpdRendering) return false;
-
-        qpdRendering = true;
-
-        try {
-            const activeDaysLabel = [...document.querySelectorAll('span')]
-                .find(el => el.textContent.includes('Total active days'));
-
-            if (!activeDaysLabel) {
-                return false;
-            }
-
-            const statsBar =
-                activeDaysLabel.closest('div.flex.items-center.text-xs') ||
-                activeDaysLabel.parentElement?.parentElement;
-
-            if (!statsBar) {
-                return false;
-            }
-
-            const solvedElement = [...document.querySelectorAll('span')]
-                .find(el =>
-                    /^\d+$/.test(el.textContent.trim()) &&
-                    el.parentElement?.textContent.includes('/')
-                );
-
-            if (!solvedElement) {
-                return false;
-            }
-
-            const solved = parseInt(
-                solvedElement.textContent.trim(),
-                10
-            );
-
-            // create placeholder immediately
-            const placeholder = createD(0, 1);
-
-            placeholder.querySelectorAll('span')[1].textContent = '...';
-
-            statsBar.prepend(placeholder);
-
-            // fetch in background
-            const activeDays = await getLifetimeActiveDays();
-
-            if (!activeDays || activeDays <= 0) {
-                placeholder.querySelectorAll('span')[1].textContent = 'N/A';
-                return false;
-            }
-
-            // update placeholder
-            placeholder.querySelectorAll('span')[1].textContent =
-                (solved / activeDays).toFixed(2);
-
-            return true;
-        } finally {
-            qpdRendering = false;
-        }
-    }
-
-
-    const observer = new MutationObserver(async () => {
-        addD();
-        addButton();
     });
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    addButton();
 })();

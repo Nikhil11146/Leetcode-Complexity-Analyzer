@@ -1,6 +1,43 @@
 (function () {
     'use strict';
 
+    function createDialog(time, space, message) {
+        // Overlay
+        const overlay = document.createElement("div");
+        overlay.className = "modal-overlay";
+
+        // Modal
+        const modal = document.createElement("div");
+        modal.className = "modal";
+
+        modal.innerHTML = `
+        <div class="modal-header">
+            <h2>Leetcode Complexity Analyzer</h2>
+        </div>
+        <div class="modal-body">
+            <p>Time Complexity: ${time}</p>
+            <p>Space Complexity: ${space}</p>
+            <p>${message}</p>
+        </div>
+        <div class="modal-footer">
+            <button class="close-btn">Close</button>
+        </div>
+    `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        overlay.querySelector(".close-btn").addEventListener("click", () => {
+            overlay.remove();
+        });
+
+        overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+            }
+        });
+    }
+
     function createButton() {
         const button = document.createElement('button');
 
@@ -97,11 +134,13 @@
 
             const result = await response.json();
 
-            alert(
-                `Time Complexity: ${result.timeComplexity}\n\n` +
-                `Space Complexity: ${result.spaceComplexity}\n\n` +
-                `Explanation: ${result.explanation}`
-            );
+            createDialog(result.timeComplexity, result.spaceComplexity, result.explanation);
+
+            // alert(
+            //     `Time Complexity: ${result.timeComplexity}\n\n` +
+            //     `Space Complexity: ${result.spaceComplexity}\n\n` +
+            //     `Explanation: ${result.explanation}`
+            // );
         } catch (error) {
             console.error(error);
             alert(`Error:\n\n${error.message}`);
@@ -122,6 +161,83 @@
     observer.observe(document.body, {
         childList: true,
         subtree: true
+    });
+
+    const style = document.createElement("style");
+    style.textContent = `
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: white;
+}
+
+.modal {
+color: white;
+    background: #222222;
+    width: 400px;
+    max-width: 90%;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-header h2 {
+    margin: 0 0 10px;
+    color: white;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+    color: white;
+}
+
+.modal-body p {
+    margin: 10px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.close-btn {
+    padding: 8px 16px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #1d4ed8;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+`;
+    document.head.appendChild(style);
+
+// Example usage
+    document.getElementById("openBtn").addEventListener("click", () => {
+        createDialog(
+            "Delete Subject",
+            "Are you sure you want to delete this subject?"
+        );
     });
 
     addButton();

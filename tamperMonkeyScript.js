@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Leetcode Complexity Analyzer
 // @namespace    http://tampermonkey.net/
-// @version      2026-06-01
+// @version      2026-06-01ś
 // @description  Analyze LeetCode solution complexity using Gemini
 // @author       You
 // @match        https://leetcode.com/problems/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=leetcode.com
-// @grant        none
+// @grant        noneś
 // @license MIT
 // @downloadURL https://update.greasyfork.org/scripts/580597/Leetcode%20Complexity%20Analyzer.user.js
 // @updateURL https://update.greasyfork.org/scripts/580597/Leetcode%20Complexity%20Analyzer.meta.js
